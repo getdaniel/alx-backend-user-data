@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """ Personal Data."""
 import logging
-from mysql.connector import connect
-from os import getenv
+import mysql.connector
+import os
 import re
 from typing import List
 
@@ -59,11 +59,11 @@ def get_logger() -> logging.Logger:
 
 def get_db():
     """ Connects to secure database."""
-    db_host = getenv("PERSONAL_DATA_DB_HOST", "localhost")
-    db_name = getenv("PERSONAL_DATA_DB_NAME", "")
-    db_user = getenv("PERSONAL_DATA_DB_USERNAME", "root")
-    db_pwd = getenv("PERSONAL_DATA_DB_PASSWORD", "")
-    connection = connect(
+    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = os.getenv("PERSONAL_DATA_DB_NAME", "")
+    db_user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    db_pwd = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    connection = mysql.connector.connect(
         host=db_host,
         port=3306,
         user=db_user,
