@@ -56,6 +56,7 @@ def get_logger() -> logging.Logger:
 
     return logger
 
+
 def get_db():
     """ Connects to secure database."""
     db_host = getenv("PERSONAL_DATA_DB_HOST", "localhost")
@@ -71,6 +72,7 @@ def get_db():
     )
 
     return connection
+
 
 def main():
     """ Read and filter Data."""
