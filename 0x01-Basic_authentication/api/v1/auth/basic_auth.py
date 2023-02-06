@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """ Basic Auth."""
+from api.v1.auth.auth import Auth
+from models.user import User
 import base64
 import binascii
-from api.v1.auth.auth import Auth
+from typing import TypeVar
+
+
+UserType = TypeVar('User', bound=User)
 
 
 class BasicAuth(Auth):
@@ -23,11 +28,11 @@ class BasicAuth(Auth):
             return None
 
         try:
-            decoded = base64.b64decode(base64_authorization_header)
-        except (TypeError, binascii.Error):
+            decoded = base64.b64decode(base64_authorization_header).decode('utf-8')
+        except (UnicodeDecodeError, binascii.Error):
             return None
 
-        return decoded.decode('utf-8')
+        return decoded
 
     def extract_user_credentials(self, decoded_base64_authorization_header: str) -> (str, str):
         """ Extract the user credentials."""
@@ -39,3 +44,27 @@ class BasicAuth(Auth):
 
         email, password = decoded_base64_authorization_header.split(":")
         return email, password
+
+    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> UserType:
+        """ User object from credentials."""
+        if user_email is None or not isinstance(user_email, str) or user_pwd is None or not isinstance(user_pwd, str):
+            return None
+
+        users = User.search({"email": user_email})
+        if not users:
+            return None
+
+        user = users[0]
+        if not user.is_valid_password(user_pwd):
+            return None
+
+        return user
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ Overlaods the current user."""
+        authorization_header = request.headers.get('Authorization')
+        base64_authorization_header = self.extract_base64_authorization_header(authorization_header)
+        decoded_base64_authorization_header = self.decode_base64_authorization_header(base64_authorization_header)
+        user_email, user_pwd = self.extract_user_credentials(decoded_base64_authorization_header)
+
+        return self.user_object_from_credentials(user_email, user_pwd)
