@@ -9,16 +9,15 @@ class Auth:
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """ Execute for authentication before any request.
         """
-        if path is not None and excluded_paths is not None:
-            for exclusion_path in map(lambda x: x.strip(), excluded_paths):
-                pattern = ''
-                if exclusion_path[-1] == '*':
-                    pattern = '{}.*'.format(exclusion_path[0:-1])
-                else:
-                    pattern = '{}/.*'.format(exclusion_path)
+        if path is None:
+            return True
 
-                if re.match(pattern, path):
-                    return False
+        if excluded_paths is None or len(excluded_paths) == 0:
+            return True
+
+        for ex_path in excluded_paths:
+            if path == ex_path or path.startswith(ex_path[:-1]):
+                return False
 
         return True
 
