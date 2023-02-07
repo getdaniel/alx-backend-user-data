@@ -7,19 +7,23 @@ from flask import request
 class Auth:
     """ Implements Authentication of users."""
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Returns False
+        """ Execute for authentication before any request.
         """
-        if not path:
-            return True
-        if not excluded_paths or excluded_paths == []:
-            return True
-        for p in excluded_paths:
-            if path == p[:-1] or path.startswith(p):
-                return False
+        if path is not None and excluded_paths is not None:
+            for exclusion_path in map(lambda x: x.strip(), excluded_paths):
+                pattern = ''
+                if exclusion_path[-1] == '*':
+                    pattern = '{}.*'.format(exclusion_path[0:-1])
+                else:
+                    pattern = '{}/.*'.format(exclusion_path)
+
+                if re.match(pattern, path):
+                    return False
+
         return True
 
     def authorization_header(self, request=None) -> str:
-        """Returns None
+        """ Autherization header message retriver
         """
         if request is None:
             return None
@@ -28,6 +32,6 @@ class Auth:
         return request.headers.get('Authorization')
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """Returns None
+        """ The current user status
         """
         return None
