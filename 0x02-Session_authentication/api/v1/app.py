@@ -61,6 +61,7 @@ def before_request_handler():
                 abort(401)
             if user is None:
                 abort(403)
+            request.current_user = user
 
 
 if __name__ == "__main__":
