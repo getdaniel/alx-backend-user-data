@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Expiration Session"""
 from api.v1.auth.session_auth import SessionAuth
-import datetime
+from datetime import datetime, timedelta
 import os
 
 
@@ -20,7 +20,7 @@ class SessionExpAuth(SessionAuth):
 
         self.user_id_by_session_id[session_id] = {
             'user_id': user_id,
-            'created_at': datetime.datetime.now()
+            'created_at': datetime.now()
         }
         return session_id
 
@@ -40,7 +40,8 @@ class SessionExpAuth(SessionAuth):
             return None
 
         created_at = session_dict['created_at']
-        if created_at + datetime.timedelta(seconds=self.session_duration) < datetime.datetime.now():
+        date_time = created_at + timedelta(seconds=self.session_duration)
+        if date_time < datetime.now():
             return None
 
         return session_dict['user_id']
