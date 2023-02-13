@@ -3,6 +3,7 @@
 import bcrypt
 from db import DB
 from user import User
+import uuid
 
 
 def _hash_password(password: str) -> bytes:
@@ -11,6 +12,10 @@ def _hash_password(password: str) -> bytes:
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
 
     return hashed_password
+
+def _generate_uuid() -> str:
+    """ Generates UUIDs."""
+    return str(uuid.uuid4())
 
 
 class Auth:
@@ -49,4 +54,16 @@ class Auth:
             user = self._db.find_user_by(email=email)
             return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
         except Exception:
-            return False 
+            return False
+
+    def create_session(self, email: str) -> str:
+        """ Create user session."""
+        try:
+            user = self._db.find_user_by(email=email)
+        except:
+            return None
+
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+
+        return session_id
