@@ -3,6 +3,7 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import NoResultFound, InvalidRequestError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
@@ -49,3 +50,13 @@ class DB:
             new_user = None
 
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """ Find user implementation."""
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if not user:
+                raise NoResultFound("Not found")
+            return user
+        except InvalidRequestError as e:
+            raise InvalidRequestError(f"Invalid")
