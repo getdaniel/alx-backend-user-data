@@ -2,6 +2,7 @@
 """ Authentication Implementation modules."""
 import bcrypt
 from db import DB
+from sqlalchemy.orm.exc import NoResultFound
 from typing import Union
 from user import User
 import uuid
@@ -79,3 +80,12 @@ class Auth:
             return user
         except Exception:
             return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """Updates the corresponding user's session ID to None."""
+        try:
+            user = self._db.find_user_by(id=user_id)
+            user.session_id = None
+            self._db.commit()
+        except NoResultFound:
+            pass
