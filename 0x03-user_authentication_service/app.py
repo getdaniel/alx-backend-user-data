@@ -13,6 +13,7 @@ def welcome() -> str:
     """ Routes with GET /."""
     return jsonify({"message": "Bienvenue"})
 
+
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def register_user() -> str:
     """ Register new user by POST /users."""
@@ -23,6 +24,7 @@ def register_user() -> str:
         return jsonify({'email': user.email, 'message': 'user created'})
     except ValueError:
         return jsonify({'message': "email already registered"}), 400
+
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
@@ -38,6 +40,7 @@ def login() -> str:
 
     return response
 
+
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
     """Log out the user"""
@@ -50,6 +53,7 @@ def logout() -> str:
     else:
         abort(403)
 
+
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile() -> str:
     """ User profile."""
@@ -59,6 +63,7 @@ def profile() -> str:
     if user is None:
         abort(403)
     return jsonify({"email": user.email}), 200
+
 
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
 def get_reset_password_token():
@@ -70,6 +75,7 @@ def get_reset_password_token():
         return jsonify(payload), 200
     except ValueError:
         abort(403)
+
 
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> str:

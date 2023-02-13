@@ -18,14 +18,14 @@ def register_user(email: str, password: str) -> None:
     response = requests.post(url, data={"email": email, "password": password})
     assert response.status_code == 400
     assert response.json() == {"message": "email already registered"}
-    
+
 
 def log_in_wrong_password(email: str, password: str) -> None:
     """ Tests loging with in wrong password."""
     url = f"{BASE_URL}/sessions"
     response = requests.post(url, data={"email": email, "password": password})
     assert response.status_code == 401
-    
+
 
 def log_in(email: str, password: str) -> str:
     """ Tests log in method."""
@@ -34,14 +34,14 @@ def log_in(email: str, password: str) -> str:
     assert response.status_code == 200
     assert response.json() == {"email": email, "message": "logged in"}
     return response.cookies["session_id"]
-    
+
 
 def profile_unlogged() -> None:
     """ Tests information when profile logged out."""
     url = f"{BASE_URL}/profile"
     response = requests.get(url)
     assert response.status_code == 403
-    
+
 
 def profile_logged(session_id: str) -> None:
     """ Tests information when profile is logged in."""
@@ -49,7 +49,7 @@ def profile_logged(session_id: str) -> None:
     response = requests.get(url, cookies={"session_id": session_id})
     assert response.status_code == 200
     assert response.json()["email"] == "guillaume@holberton.io"
-    
+
 
 def log_out(session_id: str) -> None:
     """ Tests logging out of a session."""
@@ -57,7 +57,7 @@ def log_out(session_id: str) -> None:
     response = requests.delete(url, cookies={"session_id": session_id})
     assert response.status_code == 200
     assert response.json()["message"] == "Bienvenue"
-    
+
 
 def reset_password_token(email: str) -> str:
     """ Tests requesting a password reset token."""
@@ -69,13 +69,12 @@ def reset_password_token(email: str) -> str:
     assert "reset_token" in payload
 
     return payload["reset_token"]
-    
+
 
 def update_password(email: str, reset_token: str, new_password: str) -> None:
     """ Tests the updating of user's password."""
     url = f"{BASE_URL}/reset_password"
-    response = requests.put(url,
-            data={
+    response = requests.put(url, `data={
                 "email": email,
                 "reset_token": reset_token,
                 "new_password": new_password

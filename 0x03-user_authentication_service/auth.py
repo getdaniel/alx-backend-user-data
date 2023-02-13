@@ -15,6 +15,7 @@ def _hash_password(password: str) -> bytes:
 
     return hashed_password
 
+
 def _generate_uuid() -> str:
     """ Generates UUIDs."""
     return str(uuid.uuid4())
@@ -43,7 +44,7 @@ class Auth:
         """
         try:
             self._db.find_user_by(email=email)
-        except:
+        except NoResultFound:
             return self._db.add_user(email, _hash_password(password))
         raise ValueError("User {} already exists".format(email))
 
@@ -54,7 +55,8 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+            return bcrypt.checkpw(
+                    password.encode('utf-8'), user.hashed_password)
         except Exception:
             return False
 
@@ -62,7 +64,7 @@ class Auth:
         """ Create user session."""
         try:
             user = self._db.find_user_by(email=email)
-        except:
+        except NoResultFound:
             return None
 
         session_id = _generate_uuid()
@@ -101,7 +103,7 @@ class Auth:
         except NoResultFound:
             raise ValueError()
 
-        reset_token = _generate_uuid() 
+        reset_token = _generate_uuid()
         self._db.update_user(user.id, reset_token=reset_token)
 
         return reset_token
