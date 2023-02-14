@@ -87,7 +87,7 @@ class Auth:
         """Updates the corresponding user's session ID to None."""
         user = self._db.find_user_by(id=user_id)
         user.session_id = None
-        sellf._db.commit()
+        self._db.commit()
 
         return None
 
