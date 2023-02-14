@@ -74,7 +74,7 @@ def reset_password_token(email: str) -> str:
 def update_password(email: str, reset_token: str, new_password: str) -> None:
     """ Tests the updating of user's password."""
     url = f"{BASE_URL}/reset_password"
-    response = requests.put(url, `data={
+    response = requests.put(url, data={
                 "email": email,
                 "reset_token": reset_token,
                 "new_password": new_password
